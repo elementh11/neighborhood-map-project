@@ -1,26 +1,25 @@
 import React, { Component } from 'react';
-import './App.css';
-import Map from './components/Map';
+import MyMap from"./components/MyMap";
 
+/*Passes all places into the map as props.*/
 
 class App extends Component {
 
-state = {
-  locations: [
-    {title: 'Park Ave Penthouse', location: {lat: 40.7713024, lng: -73.9632393}},
-    {title: 'Chelsea Loft', location: {lat: 40.7444883, lng: -73.9949465}},
-    {title: 'Union Square Open Floor Plan', location: {lat: 40.7347062, lng: -73.9895759}},
-    {title: 'East Village Hip Studio', location: {lat: 40.7281777, lng: -73.984377}},
-    {title: 'TriBeCa Artsy Bachelor Pad', location: {lat: 40.7195264, lng: -74.0089934}},
-    {title: 'Chinatown Homey Space', location: {lat: 40.7180628, lng: -73.9961237}}
-  ]
-}
-
-  render() {
-      return (
-        <Map myLocations={this.state.locations}/>
-      );
-    }
+ state ={
+  locations:[
+           {title: "Expedition Everest", location: {lat: 28.359373, lng: -81.586706}},
+           {title: "Hollywood Rip Ride", location: {lat: 28.4749791, lng: -81.468223}},
+           {title: "Universal's Islands of Adventure", location: {lat: 28.471140, lng: -81.471570}},
+           {title: "Rock 'N' Roller Coaster", location: {lat: 28.359724, lng: -81.561841}},
+           {title: "Sea World Mako Rollercoaster", location: {lat: 28.411360, lng: -81.463770}},
+           {title: "Space Mountain", location: {lat: 28.419151, lng: -81.577250}}
+        ]
+ }
+  render(){
+    return(
+      <MyMap myLocations={this.state.locations} />
+    )
+  }
 }
 
 export default App;
