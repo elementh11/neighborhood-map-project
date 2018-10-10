@@ -7,13 +7,13 @@ class App extends Component {
 
  state ={
   locations:[
-           {title: "Expedition Everest", location: {lat: 28.359373, lng: -81.586706}},
-           {title: "Hollywood Rip Ride", location: {lat: 28.4749791, lng: -81.468223}},
-           {title: "Universal's Islands of Adventure", location: {lat: 28.471140, lng: -81.471570}},
-           {title: "Rock 'N' Roller Coaster", location: {lat: 28.359724, lng: -81.561841}},
-           {title: "Sea World Mako Rollercoaster", location: {lat: 28.411360, lng: -81.463770}},
-           {title: "Space Mountain", location: {lat: 28.419151, lng: -81.577250}}
-        ]
+    {title: 'Dunedin Marina', location: {lat: 28.0116851, lng: -82.7937135}},
+    {title: 'Treasure Island Beach', location: {lat: 27.766509, lng: -82.769387}},
+    {title: 'Crystal Beach', location: {lat: 28.0914044, lng: -82.7798243}},
+    {title: 'Sand Key Park', location: {lat: 27.959113, lng: -82.827708}},
+    {title: 'Bean Point', location: {lat: 27.5380915, lng: -82.7459336}},
+    {title: 'Pier 60', location: {lat: 27.9766, lng: -82.8286}},
+  ]
  }
   render(){
     return(

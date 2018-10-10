@@ -1,19 +1,20 @@
 import { Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 import React, { Component } from 'react';
-import PropTypes from "prop-types";
+//import PropTypes from "prop-types";
 //import MapStyleOptions from './json/MapStyleOptions.json';
 import * as fourSquareAPI from './APIs/fourSquareAPI.js';
 
 /**
 *Google Maps Container implemented with google-maps-react library
+// inspiration from https://scotch.io/tutorials/react-apps-with-the-google-maps-api-and-google-maps-react
 */
 
 class Mapcontainer extends Component {
 
   state = {
     bounds: {},
-    infoWindowVisible: false,
-    likes: '',
+    showInfoWindow: false,
+    rating: '',
     photo: '',
     activeMarker: {}
   }
@@ -22,33 +23,33 @@ class Mapcontainer extends Component {
   onMarkerClick = (markerProperties, markerReference) =>{
     this.setState({
       activeMarker: markerReference,
-      infoWindowVisible: true,
-      likes: 'Loading likes',
+      showInfoWindow: true,
+      rating: 'Loading rating',
       photo: 'Loading photo'
     });
-    this.getFourSquareInfo(markerProperties.position.lat, markerProperties.position.lng,markerProperties.title)
+    this.getVenues(markerProperties.position.lat, markerProperties.position.lng,markerProperties.title)
   }
 
   //Get FourSquare API info and error handling
-  getFourSquareInfo = (lat,lng,name) => {
+  getVenues = (lat,lng,name) => {
     return fourSquareAPI.getSearchResult(lat, lng, name).then(venueId => {
       if(venueId ==='error' )
         this.setState({
-            likes: 'Error loading Content',
+            rating: 'Error loading Content',
             photo: 'error'
         });
        else {
         fourSquareAPI.getDetails(venueId).then(response => {
           if(response === 'error' || response.meta.code !== 200)
             this.setState({
-              likes: 'Error loading content',
+              rating: 'Error loading content',
               photo: 'error'
             });
           else{
-            if('likes' in response.response.venue)
-              this.setState({likes: response.response.venue.likes.summary});
+            if('rating' in response.response.venue)
+              this.setState({rating: response.response.venue.rating});
             else
-              this.setState({likes: 'Error loading content'});
+              this.setState({rating: 'Error loading content'});
             if('bestPhoto' in response.response.venue)
              this.setState({photo: response.response.venue.bestPhoto.prefix+'150'+response.response.venue.bestPhoto.suffix});
             else
@@ -60,33 +61,42 @@ class Mapcontainer extends Component {
   }
 
 //Bounds set to display all markers within the google maps container upon mounting componenent
-  setBounds = () => {
-    let bounds = new this.props.google.maps.LatLngBounds();
-    for (let i = 0; i < this.props.placesToDisplay.length; i++)
-        bounds.extend(this.props.placesToDisplay[i].location);
-    this.setState({bounds})
-  }
+  // setBounds = () => {
+  //   let bounds = new this.props.google.maps.LatLngBounds();
+  //   this.props.selectedMapLocations.map(x => bounds.extend(x.location));
+  //   // for (let i = 0; i < this.props.selectedMapLocations.length; i++)
+  //   //     bounds.extend(this.props.selectedMapLocations[i].location);
+  //   //this.setState({bounds})
+  // }
+  //
+  // componentDidMount(){
+  //  this.setBounds();
+  // }
 
-  componentDidMount(){
-   this.setBounds();
-  }
+componentDidMount(){
+  let bounds = new this.props.google.maps.LatLngBounds();
+  this.props.selectedMapLocations.map(x => bounds.extend(x.location));
+  this.setState({bounds})
+}
+
 
 //Open corresponding marker when a place on the side list is selected
   getSnapshotBeforeUpdate(){
-      if(this.props.placeSelected !== ''){
+      if(this.props.selectedListLocation !== ''){
       this.setState({
-        activeMarker:this.refs[this.props.placeSelected].marker,
-         infoWindowVisible: true,
-         likes:'Loading likes',
+        activeMarker:this.refs[this.props.selectedListLocation].marker,
+         showInfoWindow: true,
+         rating:'Loading rating',
          photo:'Loading photo'
       });
 
-      this.getFourSquareInfo(
-        this.refs[this.props.placeSelected].props.position.lat,
-        this.refs[this.props.placeSelected].props.position.lng,
-        this.refs[this.props.placeSelected].props.title
+      this.getVenues(
+        this.refs[this.props.selectedListLocation].props.position.lat,
+        this.refs[this.props.selectedListLocation].props.position.lng,
+        this.refs[this.props.selectedListLocation].props.title
       )
-       this.props.selectPlace('')
+      //clear location in order not to exceed maximum update depth allowed by React
+       this.props.clearListLocation('')
     }
     return null;
   }
@@ -100,29 +110,29 @@ render(){
 
       <Map
         google={this.props.google}
+        onClick={() => {this.setState({activeMarker: {},showInfoWindow: false})}}
         bounds={this.state.bounds}
-        onClick={() => {this.setState({activeMarker: {},infoWindowVisible: false})}}
         ref={'map'}
-        style={{width:this.props.mapWidth}}
-        center={this.state.center}
+        // style={{width:this.props.mapWidth}}
+        // center={this.state.center}
       >
-        {this.props.placesToDisplay.map((markerInfo, index) =>
+        {this.props.selectedMapLocations.map((markerInfo, index) =>
           <Marker
               ref={markerInfo.title}
               position={{lat: markerInfo.location.lat, lng: markerInfo.location.lng}}
               key={index}
               title={markerInfo.title}
               onClick={this.onMarkerClick}
-              onMouseout={this.mouseMoveOutOfMarker}
-              onMouseover={this.onMouseoverMarker}
+              // onMouseout={this.mouseMoveOutOfMarker}
+              // onMouseover={this.onMouseoverMarker}
               animation={this.state.activeMarker.title === markerInfo.title ? this.props.google.maps.Animation.BOUNCE : null  }
-//              icon={{ url: 'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|00aced|40|_|%E2%80%A2', scaledSize: new this.props.google.maps.Size(30, 45)}}
+              icon={{ url: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png', scaledSize: new this.props.google.maps.Size(20, 32)}}
            />
         )}
         <InfoWindow
           marker={this.state.activeMarker}
-          onClose={() => this.setState({ infoWindowVisible: false})}
-          visible={this.state.infoWindowVisible} >
+          onClose={() => this.setState({ showInfoWindow: false})}
+          visible={this.state.showInfoWindow} >
             <div
               className="info-window-content"
               aria-label={`InfoWindow on ${this.state.activeMarker.title}`}
@@ -137,7 +147,8 @@ render(){
                 <div style={{textAlign:'center'}}>
                   <img  tabIndex="0"   src={this.state.photo}   alt={this.state.activeMarker.title + ' photo'}/>
                 </div>}
-              <h3 tabIndex="0"  style={{textAlign:'center'}}>{this.state.likes}</h3>
+              <h3 tabIndex="0"  style={{textAlign:'center'}}>Rating:{' '}{this.state.rating}<sup>*</sup></h3>
+              <h6 tabIndex="0"  style={{textAlign:'center'}}><sup>*</sup>data from Foursquare.com</h6>
             </div>
         </InfoWindow>
       </Map>
@@ -149,8 +160,8 @@ export default  GoogleApiWrapper({
   apiKey:'AIzaSyAt9UrH46XScWw9mlJrgHK69emSizD-Q2s'
 })(Mapcontainer)
 
-Mapcontainer.propTypes = {
-  placesToDisplay: PropTypes.array.isRequired,
-  placeSelected: PropTypes.string.isRequired,
-  selectPlace: PropTypes.func.isRequired
-}
+// Mapcontainer.propTypes = {
+//   selectedMapLocations: PropTypes.array.isRequired,
+//   selectedListLocation: PropTypes.string.isRequired,
+//   clearListLocation: PropTypes.func.isRequired
+// }

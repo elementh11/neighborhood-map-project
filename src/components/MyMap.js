@@ -19,9 +19,9 @@ class MyMap extends Component {
 	state = {
 		//sideNavStyle: '0',
 		//hamburgerClassName: 'hamburger hamburger--minus js-hamburger',
-		placesToDisplay: [],
+		selectedMapLocations: this.props.myLocations,
 		query: '',
-		listItemSelected: '',
+		selectedListLocation: '',
 		//hamburgerArialabel: 'Hamburger Menu closed. Click to Open',
 		//inputTabIndex: -12,
 	}
@@ -45,7 +45,7 @@ class MyMap extends Component {
 	// }
 	//Query search bar input and reset list item selected
 	handleQueryEvent = (query) => {
-		this.setState({query: query, listItemSelected: ''})
+		this.setState({query: query})
 		this.search(query);
 	}
 
@@ -53,17 +53,17 @@ class MyMap extends Component {
 	search = (thisQuery) => {
 		//If no input query, do not filter results. Display all places.
 		if(thisQuery.length === 0)
-			this.setState({placesToDisplay: this.props.myLocations});
+			this.setState({selectedMapLocations: this.props.myLocations});
 		else
 			//Filter input query on the list items and maps places.
-			this.setState({placesToDisplay:
+			this.setState({selectedMapLocations:
 				this.props.myLocations.filter(p => p.title.toLowerCase().includes(thisQuery.trim().toLowerCase()))})
 	}
 
 	//Display all place markers by default
-	componentDidMount() {
-		this.setState({placesToDisplay: this.props.myLocations})
-	}
+	// componentDidMount() {
+	// 	this.setState({selectedMapLocations: this.props.myLocations})
+	// }
 
 	//Hamburger menu navigtion
 	// onclickOrTouch=() => {
@@ -103,12 +103,12 @@ class MyMap extends Component {
 					}
 					</label>
 
-					{this.state.placesToDisplay.map((place, index) => (
+					{this.state.selectedMapLocations.map((place, index) => (
 						<div
 							className='placediv'
 							//tabIndex={this.state.inputTabIndex+index}
 							key={index}
-							onClick={() => this.setState({listItemSelected: place.title})}
+							onClick={() => this.setState({selectedListLocation: place.title})}
 						>
 							<a>{place.title}</a>
 						</div>
@@ -137,9 +137,10 @@ class MyMap extends Component {
 						aria-label='Google Maps Internal Window'
 					>
 						<Mapcontainer
-							placesToDisplay={this.state.placesToDisplay}
-							placeSelected={this.state.listItemSelected}
-							selectPlace={(place) => {this.setState({listItemSelected: place})}}
+							selectedMapLocations={this.state.selectedMapLocations}
+							selectedListLocation={this.state.selectedListLocation}
+							//provide a way to clear location from state in order not to exceed maximum update depth allowed by React
+							clearListLocation={(place) => {this.setState({selectedListLocation: place})}}
 						/>
 					</div>
 				</div>
