@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import MyMap from"./components/MyMap";
 
-/*Passes all places into the map as props.*/
-
 class App extends Component {
 
+ //hardcoded initial array of locations
  state ={
   locations:[
     {title: 'Dunedin Marina', location: {lat: 28.0116851, lng: -82.7937135}},
@@ -15,6 +14,7 @@ class App extends Component {
     {title: 'Pier 60', location: {lat: 27.9766, lng: -82.8286}},
   ]
  }
+
   render(){
     return(
       <MyMap myLocations={this.state.locations} />
