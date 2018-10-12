@@ -24,4 +24,4 @@ To run the app:
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 The Google Map was handled with [google-maps-react](https://www.npmjs.com/package/google-maps-react) library.
-The locations photos and ratings are obtained with Foursquare API, courtesy of [Foursquare](https://foursquare.com/).
+The locations (best) photos and ratings are obtained with Foursquare API, courtesy of [Foursquare](https://foursquare.com/).
