@@ -4,7 +4,7 @@ import '../App.css';
 
 class MyMap extends Component {
 
-  //initialize the state to show all locations by default
+  //initialize the state to display all locations by default
 	state = {
 		selectedMapLocations: this.props.myLocations,
 		selectedListLocation: '',
@@ -22,7 +22,7 @@ class MyMap extends Component {
 
 	render() {
 		return(
-			// renders the list side
+			// renders the list part
 			<div>
 				<div className={'listcontainer'} >
 				  <label className="filter" >
@@ -46,10 +46,11 @@ class MyMap extends Component {
 					))}
 				</div>
 
-        //renders the map side
+        {//renders the map part
+				}
 				<div className='mapcontainer' tabIndex='-1' >
 					<div className={'titlecontainer'} tabIndex='-1'>
-						<h1 className={'title'} >Nice beaches near Tampa, FL</h1>
+						<h1 className={'title'} >Beautiful beaches near Tampa, FL</h1>
 					</div>
 					<div className={'pagecontainer'} tabIndex='-1' role='application' >
 						<MapContainer tabIndex='-1'

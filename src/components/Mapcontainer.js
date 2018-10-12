@@ -2,10 +2,8 @@ import React, { Component } from 'react';
 import { Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 import * as Foursquare from '../SquareAPI.js';
 
-/**
-* Google Maps Container implemented with google-maps-react library
-* inspiration from https://scotch.io/tutorials/react-apps-with-the-google-maps-api-and-google-maps-react
-*/
+//renders the map using google-maps-react library
+//with help and inspiration from https://scotch.io/tutorials/react-apps-with-the-google-maps-api-and-google-maps-react
 
 class MapContainer extends Component {
 
@@ -17,31 +15,28 @@ class MapContainer extends Component {
     bounds: {},
   }
 
+  //set the bounds to include markers
   componentDidMount(){
     let bounds = new this.props.google.maps.LatLngBounds();
     this.props.selectedMapLocations.map(x => bounds.extend(x.location));
     this.setState({bounds})
   }
 
-//Used to open the infoWindow and load FourSquare info
-  onMarkerClick = (markerProperties, markerReference) =>{
+  //handles click on marker: open infowindow and get venue details
+  onMarkerClick = (markerProperties, markerReference) => {
     this.setState({
       activeMarker: markerReference,
       showInfoWindow: true,
-//      rating: 'Loading rating',
-//      photo: 'Loading photo'
     });
     this.getVenues(markerProperties.position.lat, markerProperties.position.lng,markerProperties.title)
   }
 
-  //Open corresponding marker when a place on the side list is selected
-    getSnapshotBeforeUpdate(){
-        if(this.props.selectedListLocation !== ''){
-        this.setState({
-          activeMarker:this.refs[this.props.selectedListLocation].marker,
-           showInfoWindow: true,
-//           rating:'Loading rating',
-//           photo:'Loading photo'
+  //handles click on list by using the combination of getSnapshotBeforeUpdate and componentDidMount lifecycles
+  getSnapshotBeforeUpdate(){
+    if(this.props.selectedListLocation !== '') {
+      this.setState({
+        activeMarker:this.refs[this.props.selectedListLocation].marker,
+        showInfoWindow: true,
         });
         this.getVenues(
           this.refs[this.props.selectedListLocation].props.position.lat,
@@ -49,20 +44,20 @@ class MapContainer extends Component {
           this.refs[this.props.selectedListLocation].props.title
         )
         //clear location in order not to exceed maximum update depth allowed by React
-         this.props.clearListLocation('')
-      }
-      return null;
+        //caused by the component repeatedly calling setState inside componentDidUpdate
+        this.props.clearListLocation('')
     }
+    return null;
+  }
 
-    componentDidUpdate(){
-      return null;
-    }
+  componentDidUpdate(){
+    return null;
+  }
 
-
-  //Get FourSquare API info and error handling
+  //get venue details from Foursquare: best photo and ratings
   getVenues = (lat,lng,name) => {
     return Foursquare.getSearchResult(lat, lng, name).then(venueId => {
-      if(venueId ==='error' )
+      if(venueId ==='error')
         this.setState({
             rating: 'n/a',
             photo: 'error'
@@ -70,31 +65,25 @@ class MapContainer extends Component {
        else {
         Foursquare.getDetails(venueId).then(response => {
           if(response === 'error' || response.meta.code !== 200)
-            this.setState({
-              rating: 'n/a',
-              photo: 'error'
-            });
+            this.setState({rating: 'n/a', photo: 'error'});
           else{
-            if('rating' in response.response.venue)
-              this.setState({rating: response.response.venue.rating});
-            else
-              this.setState({rating: 'n/a'});
             if('bestPhoto' in response.response.venue)
              this.setState({photo: response.response.venue.bestPhoto.prefix+'180'+response.response.venue.bestPhoto.suffix});
             else
               this.setState({photo:'error'});
+            if('rating' in response.response.venue)
+              this.setState({rating: response.response.venue.rating});
+            else
+              this.setState({rating: 'n/a'});
           }
         })
       }
     })
   }
 
-
-
-
-render(){
+  //render map, markers, infowindows with google-maps-react
+  render(){
     return (
-
       <Map
         google={this.props.google}
         onClick={() => {this.setState({activeMarker: {},showInfoWindow: false})}}
@@ -110,29 +99,22 @@ render(){
               onClick={this.onMarkerClick}
               animation={this.state.activeMarker.title === markerInfo.title ? this.props.google.maps.Animation.BOUNCE : null  }
               icon={{ url: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png', scaledSize: new this.props.google.maps.Size(25, 35)}}
-           />
+          />
         )}
         <InfoWindow
           marker={this.state.activeMarker}
           onClose={() => this.setState({ showInfoWindow: false})}
           visible={this.state.showInfoWindow} >
-            <div
-              className="infowindowcontent"
-              aria-label={`InfoWindow on ${this.state.activeMarker.title}`}
-             >
-              <h2 tabIndex="0" style={{textAlign:'center'}}>
-               {this.state.activeMarker.title}
-              </h2>
+            <div className="infowindowcontent" aria-label={`InfoWindow on ${this.state.activeMarker.title}`} >
+              <h2 tabIndex="0" style={{textAlign:'center'}}>{this.state.activeMarker.title}</h2>
               {this.state.photo ==='error' ?
                 <h3  tabIndex="0" style={{textAlign:'center'}}>error loading photo</h3> :
-                // this.state.photo ==='error' ?
-                // <h3  tabIndex="0" style={{textAlign:'center'}}>Photo could not load</h3> :
                 <div style={{textAlign:'center'}}>
-                  <img  tabIndex="0"   src={this.state.photo}   alt={this.state.activeMarker.title + ' photo'}/>
-                </div>}
-
-              <h3 tabIndex='-1'  style={{textAlign:'center'}}>Rating:{' '}{this.state.rating}/10<sup>*</sup></h3>
-              <h6 tabIndex='-1'  style={{textAlign:'center'}}><sup>*</sup>data from Foursquare.com</h6>
+                  <img tabIndex="0" src={this.state.photo} alt={this.state.activeMarker.title}/>
+                </div>
+              }
+              <h3 tabIndex='-1' style={{textAlign:'center'}}>Rating:{' '}{this.state.rating}/10<sup>*</sup></h3>
+              <h6 tabIndex='-1' style={{textAlign:'center'}}><sup>*</sup>data from Foursquare.com</h6>
             </div>
         </InfoWindow>
       </Map>
@@ -140,6 +122,6 @@ render(){
   }
 }
 
-export default  GoogleApiWrapper({
+export default GoogleApiWrapper({
   apiKey:'AIzaSyAt9UrH46XScWw9mlJrgHK69emSizD-Q2s'
 })(MapContainer)
