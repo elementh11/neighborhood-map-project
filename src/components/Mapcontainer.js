@@ -54,16 +54,16 @@ class MapContainer extends Component {
     return null;
   }
 
-  //get venue details from Foursquare: best photo and ratings
+  //get venue details from Foursquare: (best) photo and ratings
   getVenues = (lat,lng,name) => {
-    return Foursquare.getSearchResult(lat, lng, name).then(venueId => {
+    return Foursquare.searchID(lat, lng, name).then(venueId => {
       if(venueId ==='error')
         this.setState({
             rating: 'n/a',
             photo: 'error'
         });
        else {
-        Foursquare.getDetails(venueId).then(response => {
+        Foursquare.getVenueDetails(venueId).then(response => {
           if(response === 'error' || response.meta.code !== 200)
             this.setState({rating: 'n/a', photo: 'error'});
           else{
@@ -74,7 +74,7 @@ class MapContainer extends Component {
             if('rating' in response.response.venue)
               this.setState({rating: response.response.venue.rating});
             else
-              this.setState({rating: 'n/a'});
+              this.setState({rating: 'n/a', photo: 'error'});
           }
         })
       }
@@ -108,13 +108,17 @@ class MapContainer extends Component {
             <div className="infowindowcontent" aria-label={`InfoWindow on ${this.state.activeMarker.title}`} >
               <h2 tabIndex="0" style={{textAlign:'center'}}>{this.state.activeMarker.title}</h2>
               {this.state.photo ==='error' ?
-                <h3  tabIndex="0" style={{textAlign:'center'}}>error loading photo</h3> :
-                <div style={{textAlign:'center'}}>
-                  <img tabIndex="0" src={this.state.photo} alt={this.state.activeMarker.title}/>
+                <div>
+                  <h3  tabIndex="0" style={{textAlign:'center'}}>Cannot find venue details</h3>
+                </div> :
+                <div>
+                  <div style={{textAlign:'center'}}>
+                    <img tabIndex="0" src={this.state.photo} alt={this.state.activeMarker.title}/>
+                  </div>
+                  <h3 tabIndex='-1' style={{textAlign:'center'}}>Rating:{' '}{this.state.rating}/10<sup>*</sup></h3>
+                  <h6 tabIndex='-1' style={{textAlign:'center'}}><sup>*</sup>data from Foursquare.com</h6>
                 </div>
               }
-              <h3 tabIndex='-1' style={{textAlign:'center'}}>Rating:{' '}{this.state.rating}/10<sup>*</sup></h3>
-              <h6 tabIndex='-1' style={{textAlign:'center'}}><sup>*</sup>data from Foursquare.com</h6>
             </div>
         </InfoWindow>
       </Map>

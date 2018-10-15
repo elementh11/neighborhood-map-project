@@ -14,14 +14,41 @@ The project rubric is available here:
 
 ## Instructions
 
-To run the app:
+These instructions will get you a copy of the project up and running on you local machine for developing and testing purposes.
+
+### Prerequisites
+
+- have (preferably the latest) Node.js installed
+
+### Installing
+
+To get the development environment running:
+
 - clone or download this repo
 - run `npm install` from the the app directory to install dependencies
 - run `npm start` to start the dev server
-- open you browser and navigate to `http://localhost:3000`
+- navigate to `http://localhost:3000`
+
+### Running a production build
+
+To run a production buld:
+
+- run `npm run build`
+- run `serve -s build`
+- navigate to `localhost: 5000`
+
+The project includes service workers to cache the visited sites, which are active only in production mode.
 
 ## Acknowledgements
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
+
 The Google Map was handled with [google-maps-react](https://www.npmjs.com/package/google-maps-react) library.
+
 The locations (best) photos and ratings are obtained with Foursquare API, courtesy of [Foursquare](https://foursquare.com/).
+
+
+
+## License
+
+This project is licensed under the terms of the MIT license.
