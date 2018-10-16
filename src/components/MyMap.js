@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import MapContainer from'./MapContainer';
+import Mapcontainer from'./Mapcontainer';
 import '../App.css';
 
 class MyMap extends Component {
@@ -53,7 +53,7 @@ class MyMap extends Component {
 						<h1 className={'title'} >Beautiful beaches near Tampa, FL</h1>
 					</div>
 					<div className={'pagecontainer'} tabIndex='-1' role='application' >
-						<MapContainer tabIndex='-1'
+						<Mapcontainer tabIndex='-1'
 							selectedMapLocations={this.state.selectedMapLocations}
 							selectedListLocation={this.state.selectedListLocation}
 							//function below provides a way to clear the location from the component state in order not to exceed maximum update depth allowed by React

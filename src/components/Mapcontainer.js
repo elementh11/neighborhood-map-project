@@ -2,12 +2,13 @@ import React, { Component } from 'react';
 import { Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 import * as Foursquare from '../SquareAPI.js';
 
+//listening to authentication errors with gm_authFailure() https://developers.google.com/maps/documentation/javascript/events#auth-errors
 window.gm_authFailure = ()=>{alert("Cannot load Google Maps API. Please check your Google API key")}
 
 //renders the map using google-maps-react library
 //with help and inspiration from https://scotch.io/tutorials/react-apps-with-the-google-maps-api-and-google-maps-react
 
-class MapContainer extends Component {
+class Mapcontainer extends Component {
 
   state = {
     showInfoWindow: false,
@@ -130,4 +131,4 @@ class MapContainer extends Component {
 
 export default GoogleApiWrapper({
   apiKey:'AIzaSyAt9UrH46XScWw9mlJrgHK69emSizD-Q2s'
-})(MapContainer)
+})(Mapcontainer)
