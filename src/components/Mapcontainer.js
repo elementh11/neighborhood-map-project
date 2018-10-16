@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
 import * as Foursquare from '../SquareAPI.js';
 
+window.gm_authFailure = ()=>{alert("Cannot load Google Maps API. Please check your Google API key")}
+
 //renders the map using google-maps-react library
 //with help and inspiration from https://scotch.io/tutorials/react-apps-with-the-google-maps-api-and-google-maps-react
 

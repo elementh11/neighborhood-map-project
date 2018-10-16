@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import MyMap from"./components/MyMap";
+import MyMap from './components/MyMap';
+//use ErrorBoundary script from https://reactjs.org/blog/2017/07/26/error-handling-in-react-16.html
+import ErrorBoundary from './components/ErrorBoundary'
+
 
 class App extends Component {
 
@@ -17,7 +20,9 @@ class App extends Component {
 
   render(){
     return(
-      <MyMap myLocations={this.state.locations} />
+      <ErrorBoundary>
+        <MyMap myLocations={this.state.locations} />
+      </ErrorBoundary>
     )
   }
 }
